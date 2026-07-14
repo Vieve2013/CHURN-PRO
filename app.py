@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -32,15 +33,15 @@ credit_score = st.number_input(
 geography = st.selectbox(
     "Geography",
     [
-        'Geography_Christchurch', 
-        'Geography_Dunedin',
-        'Geography_Hamilton', 
-        'Geography_Nelson', 
-        'Geography_New Plymouth',
-        'Geography_Palmerston North', 
-        'Geography_Rotorua', 
-        'Geography_Tauranga',
-        'Geography_Wellington'
+        'Christchurch', 
+        'Dunedin',
+        'Hamilton', 
+        'Nelson', 
+        'New Plymouth',
+        'Palmerston North', 
+        'Rotorua', 
+        'Tauranga',
+        'Wellington'
     ]
 )
 
@@ -49,6 +50,8 @@ gender = st.selectbox(
     "Gender",
     ["Male", "Female"]
 )
+
+gender = 1 if gender == "Male" else 0
 
 ### Age
 age = st.number_input(
@@ -107,8 +110,16 @@ salary = st.number_input(
 if st.button("Predict"):
     input_df = pd.DataFrame({
         "CreditScore":[credit_score],
-        "Geography":[geography],
-        "Gender":[gender],
+        "Geography_Christchurch": [1 if geography == "Christchurch" else 0],
+        "Geography_Dunedin": [1 if geography == "Dunedin" else 0],
+        "Geography_Hamilton": [1 if geography == "Hamilton" else 0],
+        "Geography_Nelson": [1 if geography == "Nelson" else 0],
+        "Geography_New Plymouth": [1 if geography == "New Plymouth" else 0],
+        "Geography_Palmerston North": [1 if geography == "Palmerston North" else 0],
+        "Geography_Rotorua": [1 if geography == "Rotorua" else 0],
+        "Geography_Tauranga": [1 if geography == "Tauranga" else 0],
+        "Geography_Wellington": [1 if geography == "Wellington" else 0],
+        "Gender_Male":[gender],
         "Age":[age],
         "Tenure":[tenure],
         "Balance":[balance],
@@ -117,19 +128,8 @@ if st.button("Predict"):
         "Is Active Member":[active],
         "Estimated Salary":[salary]
     })
-    
-    ## Apply exactly the same preprocessing
-    input_df = pd.get_dummies(
-        input_df,
-        columns=["Gender"],
-        drop_first=True
-    )
-
-    input_df = pd.get_dummies(
-        input_df,
-        columns=["Geography"],
-        drop_first=True
-    )
+        
+    # Apply exactly the same preprocessing
 
     input_df["Tenure_to_product"] = (
         input_df["Tenure"] /
@@ -147,13 +147,13 @@ if st.button("Predict"):
         'Is Active Member',
         'Estimated Salary',
         'Gender_Male',
-        'Geography_Christchurch', 
+        'Geography_Christchurch',
         'Geography_Dunedin',
-        'Geography_Hamilton', 
-        'Geography_Nelson', 
+        'Geography_Hamilton',
+        'Geography_Nelson',
         'Geography_New Plymouth',
-        'Geography_Palmerston North', 
-        'Geography_Rotorua', 
+        'Geography_Palmerston North',
+        'Geography_Rotorua',
         'Geography_Tauranga',
         'Geography_Wellington',
         'Tenure_to_product'
@@ -164,6 +164,8 @@ if st.button("Predict"):
         fill_value=0
     )
 
+    st.dataframe(input_df)
+    
     # Load the model
     model = joblib.load("logistic_model.pkl")
 
